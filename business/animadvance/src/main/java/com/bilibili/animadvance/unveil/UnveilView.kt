@@ -30,7 +30,7 @@ class UnveilView @JvmOverloads constructor(
         xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
 
-    private val state: MutableStateFlow<UnveilState> = MutableStateFlow(UnveilState())
+    private val state: MutableStateFlow<AnimState> = MutableStateFlow(AnimState())
 
     private var coverBm: Bitmap? = null
 
@@ -43,7 +43,7 @@ class UnveilView @JvmOverloads constructor(
 
     fun startAnimation(
         coverBm: Bitmap,
-        anim: UnveilAnimParams,
+        anim: AnimParams,
         onFirstFrameRender: () -> Unit,
         onEnd: () -> Unit,
     ) {
@@ -138,7 +138,7 @@ class UnveilView @JvmOverloads constructor(
         unlockCanvasAndPost(canvas)
     }
 
-    data class UnveilAnimParams(
+    data class AnimParams(
         val edgeStart: Float = 1f,
         val edgeEnd: Float = 0f,
         val edgeDuration: Long = 5000,
@@ -156,12 +156,12 @@ class UnveilView @JvmOverloads constructor(
         val cx: Float = 0f,
     )
 
-    private data class UnveilState(
+    private data class AnimState(
         val end: Boolean = false,
         val edgeY: Float = 0f,
         val peakY: Float = 0f,
         val brandCY: Float = 0f,
-        val params: UnveilAnimParams = UnveilAnimParams(),
+        val params: AnimParams = AnimParams(),
     ) {
         val alphaPath: Path
             get() = Path().apply {
@@ -182,11 +182,6 @@ class UnveilView @JvmOverloads constructor(
             )
     }
 }
-
-private data class Position(
-    var x: Int = 0,
-    var y: Int = 0,
-)
 
 
 

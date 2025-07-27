@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(project(":business:animadvance"))
     implementation(project(":common:appresources"))
+    implementation(project(":common:baseapp"))
     // https://mvnrepository.com/artifact/com.google.android.material/material
     implementation("com.google.android.material:material:1.12.0")
     testImplementation(libs.junit)

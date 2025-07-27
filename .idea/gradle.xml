@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/business/animadvance" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/common/appresources" />
+            <option value="$PROJECT_DIR$/common/baseapp" />
           </set>
         </option>
       </GradleProjectSettings>
