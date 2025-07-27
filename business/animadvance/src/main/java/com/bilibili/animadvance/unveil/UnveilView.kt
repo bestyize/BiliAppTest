@@ -33,6 +33,7 @@ class UnveilView @JvmOverloads constructor(
     private val state: MutableStateFlow<AnimState> = MutableStateFlow(AnimState())
 
     private var coverBm: Bitmap? = null
+    private var brandBm: Bitmap? = null
 
     private var firstFrameRender: (() -> Unit)? = null
 
@@ -40,37 +41,38 @@ class UnveilView @JvmOverloads constructor(
         isOpaque = false
     }
 
-
     fun startAnimation(
         coverBm: Bitmap,
-        anim: AnimParams,
+        brandBm: Bitmap,
+        params: AnimParams,
         onFirstFrameRender: () -> Unit,
         onEnd: () -> Unit,
     ) {
         this.coverBm = coverBm
-        state.value = state.value.copy(params = anim)
+        this.brandBm = brandBm
+        state.value = state.value.copy(params = params)
         val edgeAnimator = ValueAnimator.ofFloat(
-            anim.containerHeight * anim.edgeStart,
-            anim.containerHeight * anim.edgeEnd
+            params.containerHeight * params.edgeStart,
+            params.containerHeight * params.edgeEnd
         ).apply {
-            duration = anim.edgeDuration
+            duration = params.edgeDuration
             addUpdateListener {
                 state.value = state.value.copy(edgeY = it.animatedValue as Float)
             }
         }
         val peakAnimator = ValueAnimator.ofFloat(
-            anim.containerHeight * anim.peakStart,
-            anim.containerHeight * anim.peakEnd
+            params.containerHeight * params.peakStart,
+            params.containerHeight * params.peakEnd
         ).apply {
-            duration = anim.peakDuration
+            duration = params.peakDuration
             addUpdateListener {
                 state.value = state.value.copy(peakY = it.animatedValue as Float)
             }
         }
 
-        val brandMoveAnimator = ValueAnimator.ofFloat(anim.containerHeight * anim.brandStart, anim.containerHeight * anim.brandEnd).apply {
-            duration = anim.brandDuration
-            startDelay = anim.brandStartDelay
+        val brandMoveAnimator = ValueAnimator.ofFloat(params.containerHeight * params.brandStart, params.containerHeight * params.brandEnd).apply {
+            duration = params.brandDuration
+            startDelay = params.brandStartDelay
             addUpdateListener {
                 state.value = state.value.copy(brandCY = it.animatedValue as Float)
             }
@@ -100,10 +102,21 @@ class UnveilView @JvmOverloads constructor(
 
     private val frameCostMsList = mutableListOf<Long>()
 
-    private val srcRect by lazy { Rect(0, 0, coverBm!!.width, coverBm!!.height) }
+    private val brandSrcRect by lazy {
+        Rect(
+            0, 0, brandBm!!.width, brandBm!!.height
+        )
+    }
+
+    private val coverSrcRect by lazy {
+        Rect(
+            0, 0, coverBm!!.width, coverBm!!.height
+        )
+    }
 
     private fun drawAnim() {
-        val bm = coverBm ?: return
+        val cover = coverBm ?: return
+        val brand = brandBm ?: return
         val canvas = lockCanvas() ?: return
         measureTimeMillis {
             canvas.drawPaint(cleanPainter)
@@ -113,8 +126,8 @@ class UnveilView @JvmOverloads constructor(
                 }
 
                 drawBitmap(
-                    bm,
-                    srcRect,
+                    cover,
+                    coverSrcRect,
                     Rect(
                         0,
                         0,
@@ -131,7 +144,7 @@ class UnveilView @JvmOverloads constructor(
                 }
 
             }
-            canvas.drawBitmap(bm, srcRect, state.value.brandRect, null)
+            canvas.drawBitmap(brand, brandSrcRect, state.value.brandRect, null)
         }.apply {
             frameCostMsList.add(this)
         }

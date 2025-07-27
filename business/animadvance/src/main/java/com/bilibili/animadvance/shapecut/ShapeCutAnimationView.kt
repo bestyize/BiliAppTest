@@ -4,8 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
@@ -14,7 +12,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.TextureView
 import androidx.core.animation.addListener
-import androidx.core.graphics.createBitmap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.system.measureTimeMillis
 
@@ -40,7 +37,7 @@ class ShapeCutAnimationView @JvmOverloads constructor(
 
 
     private var coverBm: Bitmap? = null
-    private var shapeBm: Bitmap? = null
+    private var brandBm: Bitmap? = null
 
     private var firstFrameRender: (() -> Unit)? = null
     private val frameCostMsList = mutableListOf<Long>()
@@ -50,11 +47,14 @@ class ShapeCutAnimationView @JvmOverloads constructor(
     }
 
     fun startAnimation(
-        coverBm: Bitmap, shapeBm: Bitmap, params: AnimParams, onFirstFrameRender: () -> Unit,
+        coverBm: Bitmap,
+        brandBm: Bitmap,
+        params: AnimParams,
+        onFirstFrameRender: () -> Unit,
         onEnd: () -> Unit,
     ) {
         this.coverBm = coverBm
-        this.shapeBm = shapeBm
+        this.brandBm = brandBm
         state.value = state.value.copy(
             params = params
         )
@@ -96,19 +96,19 @@ class ShapeCutAnimationView @JvmOverloads constructor(
 
     }
 
-    private val shapeRectSrc by lazy {
+    private val brandSrcRect by lazy {
         Rect(
-            0, 0, shapeBm!!.width, shapeBm!!.height
+            0, 0, brandBm!!.width, brandBm!!.height
         )
     }
 
-    private val coverBmRect by lazy {
+    private val coverSrcRect by lazy {
         Rect(
             0, 0, coverBm!!.width, coverBm!!.height
         )
     }
 
-    private val coverBmDstRect by lazy {
+    private val coverDstRect by lazy {
         Rect(
             0,
             0,
@@ -119,23 +119,23 @@ class ShapeCutAnimationView @JvmOverloads constructor(
 
     private fun drawAnim() {
         val cover = coverBm ?: return
-        val shape = shapeBm ?: return
+        val brand = brandBm ?: return
         val canvas = lockCanvas() ?: return
         canvas.drawPaint(cleanPainter)
         measureTimeMillis {
             val shapeCurrRect = state.value.currentShapeRect
             // 1. 先绘制遮罩图（作为DST）
-            canvas.drawBitmap(shape, shapeRectSrc, shapeCurrRect, null)
+            canvas.drawBitmap(brand, brandSrcRect, shapeCurrRect, null)
             // 2. 设置混合模式：仅保留目标图与遮罩非透明区域的重叠部分
             shapePaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
             shapePaint.alpha = state.value.alpha
             // 3. 绘制目标图,带透明通道（作为SRC）
-            canvas.drawBitmap(cover, coverBmRect, coverBmDstRect, shapePaint)
+            canvas.drawBitmap(cover, coverSrcRect, coverDstRect, shapePaint)
             // 4. 清除Xfermode避免影响后续绘制
             shapePaint.xfermode = null
             // 5. 将结果绘制到View的Canvas
             shapeAppearPaint.alpha = 255 - state.value.alpha
-            canvas.drawBitmap(shape, shapeRectSrc, shapeCurrRect, shapeAppearPaint)
+            canvas.drawBitmap(brand, brandSrcRect, shapeCurrRect, shapeAppearPaint)
         }.let {
             frameCostMsList.add(it)
         }

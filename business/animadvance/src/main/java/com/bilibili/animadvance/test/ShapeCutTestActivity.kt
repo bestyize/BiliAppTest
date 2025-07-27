@@ -55,7 +55,7 @@ class ShapeCutTestActivity : AppCompatActivity() {
             )
             animView.startAnimation(
                 coverBm = cover,
-                shapeBm = shape,
+                brandBm = shape,
                 params = ShapeCutAnimationView.AnimParams(
                     targetRect = targetRect,
                     scaleInitPercent = 25f,
