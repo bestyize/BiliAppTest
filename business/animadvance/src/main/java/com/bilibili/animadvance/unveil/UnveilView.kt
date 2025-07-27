@@ -123,10 +123,13 @@ class UnveilView @JvmOverloads constructor(
                     ),
                     null
                 )
-                post {
-                    firstFrameRender?.invoke()
-                    firstFrameRender = null
+                if (firstFrameRender != null) {
+                    post {
+                        firstFrameRender?.invoke()
+                        firstFrameRender = null
+                    }
                 }
+
             }
             canvas.drawBitmap(bm, srcRect, state.value.brandRect, null)
         }.apply {
