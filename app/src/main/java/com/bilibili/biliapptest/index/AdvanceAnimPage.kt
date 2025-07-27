@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bilibili.animadvance.test.FoldImageTestActivity
 import com.bilibili.animadvance.test.ShapeCutTestActivity
 import com.bilibili.animadvance.test.UnveilTestActivity
 
@@ -42,6 +43,14 @@ fun AdvanceAnimPage() {
             activity?.startActivity(
                 Intent(
                     activity, ShapeCutTestActivity::class.java
+                )
+            )
+        }
+
+        OptionView(title = "折叠动画") {
+            activity?.startActivity(
+                Intent(
+                    activity, FoldImageTestActivity::class.java
                 )
             )
         }

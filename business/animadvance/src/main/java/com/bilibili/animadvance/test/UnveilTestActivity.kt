@@ -42,7 +42,7 @@ class UnveilTestActivity : AppCompatActivity() {
             tag = "unveilView"
         }
         val unveilView = unveilView ?: return
-        binding.root.addView(unveilView)
+        binding.root.addView(unveilView, 0)
         unveilView.doOnPreDraw {
             val cover = binding.bg.drawToBitmap()
             val brand = BitmapFactory.decodeResource(

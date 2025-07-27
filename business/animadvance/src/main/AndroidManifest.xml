@@ -3,6 +3,9 @@
 
     <application>
         <activity
+            android:name=".test.FoldImageTestActivity"
+            android:exported="false" />
+        <activity
             android:name=".test.ShapeCutTestActivity"
             android:exported="false" />
         <activity
