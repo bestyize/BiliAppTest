@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
         unveilView.doOnPreDraw {
             val cover = binding.bg.drawToBitmap()
             unveilView.startAnimation(
-                bm = cover, anim = UnveilView.UnveilAnimParams(
+                coverBm = cover, anim = UnveilView.UnveilAnimParams(
                     edgeStart = 1f,
                     edgeEnd = 0f,
                     edgeDuration = 1000,
@@ -50,6 +50,10 @@ class MainActivity : ComponentActivity() {
                     peakDuration = 800,
                     containerWidth = it.width.toFloat(),
                     containerHeight = it.height.toFloat(),
+                    brandStart = 1f,
+                    brandEnd = 0.2f,
+                    brandWidth = 200,
+                    brandHeight = 400,
                     cx = it.width / 2f
                 ), onEnd = {
 

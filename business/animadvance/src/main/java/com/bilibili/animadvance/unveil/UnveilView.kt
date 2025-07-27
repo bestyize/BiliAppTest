@@ -42,12 +42,12 @@ class UnveilView @JvmOverloads constructor(
 
 
     fun startAnimation(
-        bm: Bitmap,
+        coverBm: Bitmap,
         anim: UnveilAnimParams,
         onFirstFrameRender: () -> Unit,
         onEnd: () -> Unit,
     ) {
-        coverBm = bm
+        this.coverBm = coverBm
         state.value = state.value.copy(params = anim)
         val edgeAnimator = ValueAnimator.ofFloat(
             anim.containerHeight * anim.edgeStart,
@@ -68,8 +68,16 @@ class UnveilView @JvmOverloads constructor(
             }
         }
 
+        val brandMoveAnimator = ValueAnimator.ofFloat(anim.containerHeight * anim.brandStart, anim.containerHeight * anim.brandEnd).apply {
+            duration = anim.brandDuration
+            startDelay = anim.brandStartDelay
+            addUpdateListener {
+                state.value = state.value.copy(brandCY = it.animatedValue as Float)
+            }
+        }
+
         AnimatorSet().apply {
-            playTogether(edgeAnimator, peakAnimator)
+            playTogether(edgeAnimator, peakAnimator, brandMoveAnimator)
             addListener(onEnd = {
                 state.value = state.value.copy(end = true)
                 onEnd.invoke()
@@ -120,7 +128,7 @@ class UnveilView @JvmOverloads constructor(
                     firstFrameRender = null
                 }
             }
-            canvas.drawBitmap(bm, srcRect, Rect(400, 800, 640, 1800 ), null)
+            canvas.drawBitmap(bm, srcRect, state.value.brandRect, null)
         }.apply {
             frameCostMsList.add(this)
         }
@@ -136,6 +144,12 @@ class UnveilView @JvmOverloads constructor(
         val peakDuration: Long = 3000,
         val containerWidth: Float = 0f,
         val containerHeight: Float = 0f,
+        val brandWidth: Int = 0,
+        val brandHeight: Int = 0,
+        val brandStart: Float = 0f,
+        val brandEnd: Float = 0f,
+        val brandDuration: Long = 2000,
+        val brandStartDelay: Long = 1000,
         val cx: Float = 0f,
     )
 
@@ -143,6 +157,7 @@ class UnveilView @JvmOverloads constructor(
         val end: Boolean = false,
         val edgeY: Float = 0f,
         val peakY: Float = 0f,
+        val brandCY: Float = 0f,
         val params: UnveilAnimParams = UnveilAnimParams(),
     ) {
         val alphaPath: Path
@@ -154,6 +169,14 @@ class UnveilView @JvmOverloads constructor(
                 lineTo(params.containerWidth, edgeY)
                 cubicTo(params.cx, edgeY, params.cx, peakY, params.cx, peakY)
             }
+
+        val brandRect: Rect
+            get() = Rect(
+                (params.cx - params.brandWidth / 2).toInt(),
+                (brandCY - params.brandHeight / 2).toInt(),
+                (params.cx + params.brandWidth / 2).toInt(),
+                (brandCY + params.brandHeight / 2).toInt(),
+            )
     }
 }
 
