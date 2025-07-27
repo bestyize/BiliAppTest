@@ -34,10 +34,6 @@ class ShapeCutAnimationView @JvmOverloads constructor(
 
     private val shapePaint = Paint()
 
-    private val shapeAlphaPaint = Paint().apply {
-        alpha = 255
-    }
-
     private val shapeAppearPaint = Paint().apply {
         alpha = 0
     }
@@ -121,40 +117,25 @@ class ShapeCutAnimationView @JvmOverloads constructor(
         )
     }
 
-    private val compositeBitmap by lazy {
-        createBitmap(
-            state.value.params.containerWidth.toInt(),
-            state.value.params.containerHeight.toInt(),
-            Bitmap.Config.ARGB_8888,
-        )
-    }
-
     private fun drawAnim() {
         val cover = coverBm ?: return
         val shape = shapeBm ?: return
         val canvas = lockCanvas() ?: return
         canvas.drawPaint(cleanPainter)
         measureTimeMillis {
-            // 0. 清除结果Bitmap，避免上次绘制的残留
-            compositeBitmap.clear()
-            // 1. 创建离屏Bitmap（避免污染原始Canvas）
-            val tempCanvas = Canvas(compositeBitmap)
-            tempCanvas.clipRect(Rect(0, 0, width, height))
             val shapeCurrRect = state.value.currentShapeRect
-            // 2. 先绘制遮罩图（作为DST）
-            tempCanvas.drawBitmap(shape, shapeRectSrc, shapeCurrRect, null)
-            // 3. 设置混合模式：仅保留目标图与遮罩非透明区域的重叠部分
+            // 1. 先绘制遮罩图（作为DST）
+            canvas.drawBitmap(shape, shapeRectSrc, shapeCurrRect, null)
+            // 2. 设置混合模式：仅保留目标图与遮罩非透明区域的重叠部分
             shapePaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-            // 4. 绘制目标图（作为SRC）
-            tempCanvas.drawBitmap(cover, coverBmRect, coverBmDstRect, shapePaint)
-            // 5. 清除Xfermode避免影响后续绘制
+            shapePaint.alpha = state.value.alpha
+            // 3. 绘制目标图,带透明通道（作为SRC）
+            canvas.drawBitmap(cover, coverBmRect, coverBmDstRect, shapePaint)
+            // 4. 清除Xfermode避免影响后续绘制
             shapePaint.xfermode = null
-            shapeAlphaPaint.alpha = state.value.alpha
-            // 6. 将结果绘制到View的Canvas
-            canvas.drawBitmap(compositeBitmap, 0f, 0f, shapeAlphaPaint)
+            // 5. 将结果绘制到View的Canvas
             shapeAppearPaint.alpha = 255 - state.value.alpha
             canvas.drawBitmap(shape, shapeRectSrc, shapeCurrRect, shapeAppearPaint)
-
         }.let {
             frameCostMsList.add(it)
         }
@@ -198,7 +179,6 @@ class ShapeCutAnimationView @JvmOverloads constructor(
 
 }
 
-
 private fun Rect.scaleTo(scale: Float): Rect {
     val newWidth = (width() * scale).toInt()
     val newHeight = (height() * scale).toInt()
@@ -212,9 +192,4 @@ private fun Rect.scaleTo(scale: Float): Rect {
         cx + newWidth / 2,
         cy + newHeight / 2,
     )
-}
-private fun Bitmap.clear() {
-    if (isMutable) { // 必须为可变的 Bitmap
-        eraseColor(Color.TRANSPARENT)
-    }
 }
