@@ -61,7 +61,8 @@ class ShapeCutTestActivity : AppCompatActivity() {
                     scaleInitPercent = 25f,
                     scaleEndPercent = 2f,
                     scaleDuration = 3000,
-                    alphaDuration = 3000,
+                    alphaDuration = 500,
+                    alphaDelay = 2500,
                     containerWidth = it.width.toFloat(),
                     containerHeight = it.height.toFloat()
                 ),

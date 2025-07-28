@@ -17,23 +17,39 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    signingConfigs {
+        create("config") {
+            storeFile = file(properties["signKeyStoreFilePath"] as String)
+            keyAlias = properties["signKeyAlias"] as String
+            keyPassword = properties["signKeyPassword"] as String
+            storePassword = properties["signKeyStorePassword"] as String
+        }
+    }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+        named("release") {
+            isMinifyEnabled = true
+            signingConfig = signingConfigs["config"]
+            setProguardFiles(
+                listOf(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro",
+                ),
             )
+        }
+        named("debug") {
+            signingConfig = signingConfigs["config"]
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         compose = true
         viewBinding = true
@@ -54,7 +70,7 @@ dependencies {
     implementation(project(":common:appresources"))
     implementation(project(":common:baseapp"))
     // https://mvnrepository.com/artifact/com.google.android.material/material
-    implementation("com.google.android.material:material:1.12.0")
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

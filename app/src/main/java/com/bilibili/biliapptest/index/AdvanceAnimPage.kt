@@ -20,7 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bilibili.animadvance.test.FoldImageTestActivity
+import com.bilibili.animadvance.test.FoldImage2DTestActivity
+import com.bilibili.animadvance.test.FoldImage3DTestActivity
 import com.bilibili.animadvance.test.ShapeCutTestActivity
 import com.bilibili.animadvance.test.UnveilTestActivity
 
@@ -30,28 +31,40 @@ fun AdvanceAnimPage() {
     FlowRow(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         OptionView(title = "揭幕动画") {
             activity?.startActivity(
                 Intent(
-                    activity, UnveilTestActivity::class.java
-                )
+                    activity,
+                    UnveilTestActivity::class.java,
+                ),
             )
         }
         OptionView(title = "剪影动画") {
             activity?.startActivity(
                 Intent(
-                    activity, ShapeCutTestActivity::class.java
-                )
+                    activity,
+                    ShapeCutTestActivity::class.java,
+                ),
             )
         }
 
-        OptionView(title = "折叠动画") {
+        OptionView(title = "折叠动画3D") {
             activity?.startActivity(
                 Intent(
-                    activity, FoldImageTestActivity::class.java
-                )
+                    activity,
+                    FoldImage3DTestActivity::class.java,
+                ),
+            )
+        }
+
+        OptionView(title = "折叠动画2D") {
+            activity?.startActivity(
+                Intent(
+                    activity,
+                    FoldImage2DTestActivity::class.java,
+                ),
             )
         }
     }
@@ -59,18 +72,24 @@ fun AdvanceAnimPage() {
 
 @Preview
 @Composable
-private fun OptionView(title: String = "", onClick: () -> Unit = {}) {
+private fun OptionView(
+    title: String = "",
+    onClick: () -> Unit = {},
+) {
     Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .background(color = Color(0xFFFF6699), shape = RoundedCornerShape(8.dp))
-            .clickable {
-                onClick.invoke()
-            }
-            .padding(10.dp), contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .wrapContentSize()
+                .background(color = Color(0xFFFF6699), shape = RoundedCornerShape(8.dp))
+                .clickable {
+                    onClick.invoke()
+                }.padding(10.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = title, color = Color.White, fontSize = 16.sp
+            text = title,
+            color = Color.White,
+            fontSize = 16.sp,
         )
     }
 }
