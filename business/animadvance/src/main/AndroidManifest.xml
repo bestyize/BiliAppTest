@@ -3,15 +3,18 @@
 
     <application>
         <activity
+            android:name=".test.FlexScaleActivity"
+            android:exported="false" />
+        <activity
             android:name=".test.FoldImage3DTestActivity"
             android:exported="false" />
         <activity
             android:name=".test.FoldImage2DTestActivity"
             android:exported="false" />
         <activity
-            android:hardwareAccelerated="true"
             android:name=".test.ShapeCutTestActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".test.UnveilTestActivity"
             android:exported="false" />

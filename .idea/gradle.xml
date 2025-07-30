@@ -13,9 +13,11 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/business" />
             <option value="$PROJECT_DIR$/business/animadvance" />
+            <option value="$PROJECT_DIR$/business/bilirouter" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/common/appresources" />
             <option value="$PROJECT_DIR$/common/baseapp" />
+            <option value="$PROJECT_DIR$/common/viewwidget" />
           </set>
         </option>
       </GradleProjectSettings>

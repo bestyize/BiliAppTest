@@ -23,7 +23,7 @@ android {
 
     signingConfigs {
         create("config") {
-            storeFile = file(properties["signKeyStoreFilePath"] as String)
+            storeFile = file("/Users/bilibili/Work/AS/example/biliapp_test.jks")
             keyAlias = properties["signKeyAlias"] as String
             keyPassword = properties["signKeyPassword"] as String
             storePassword = properties["signKeyStorePassword"] as String
@@ -33,7 +33,7 @@ android {
     buildTypes {
         named("release") {
             isMinifyEnabled = true
-            signingConfig = signingConfigs["config"]
+            //signingConfig = signingConfigs["config"]
             setProguardFiles(
                 listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -42,7 +42,7 @@ android {
             )
         }
         named("debug") {
-            signingConfig = signingConfigs["config"]
+            //signingConfig = signingConfigs["config"]
         }
     }
     compileOptions {
@@ -66,9 +66,12 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.navCompose)
     implementation(project(":business:animadvance"))
+    implementation(project(":business:bilirouter"))
     implementation(project(":common:appresources"))
     implementation(project(":common:baseapp"))
+    implementation(project(":common:viewwidget"))
     // https://mvnrepository.com/artifact/com.google.android.material/material
     implementation(libs.material)
     testImplementation(libs.junit)
